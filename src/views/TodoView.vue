@@ -40,7 +40,7 @@
 
 <script>
 import { Input, Button, Select, SelectOption } from "ant-design-vue";
-import { ref, reactive, computed } from "vue";
+import { ref, computed } from "vue";
 
 import TodoItemComp from "@/components/TodoItemComp.vue";
 
@@ -56,36 +56,66 @@ export default {
   setup() {
     const filter = ref("all");
     const title = ref("");
-    const list = reactive([]);
+    const list = ref([]);
 
     // Function
     function resetValue() {
       title.value = "";
     }
 
-    function addItem() {
+    const axios = require("axios").default;
+    const getList = () => {
+      axios
+        .get("https://ezo13.free.beeceptor.com/todos")
+        .then(function (response) {
+          list.value = response.data;
+          console.log(response);
+        })
+        .catch(function (error) {
+          // handle error
+          console.log(error);
+        })
+        .finally(function () {
+          // always executed
+        });
+    };
+
+    getList();
+
+    const addItem = () => {
       if (title.value.trim() !== "") {
         const newItem = {
           title: title.value,
-          isCompleted: false,
+          completed: false,
         };
 
-        list.push(newItem);
+        axios
+          .post("https://ezo13.free.beeceptor.com/todos", newItem)
+          .then((response) => {
+            // Xử lý phản hồi thành công
+            console.log(response.data);
+          })
+          .catch((error) => {
+            // Xử lý lỗi
+            console.error(error);
+          });
+
+        list.value.unshift(newItem);
         resetValue();
       }
-    }
+    };
 
     function removeItem(index) {
       console.log(index);
-      list.splice(index, 1);
+      list.value.splice(index, 1);
     }
 
     const listFiltered = computed(() =>
       filter.value === "completed"
-        ? list.filter((item) => item.isCompleted)
+        ? list.value.filter((item) => item.completed)
         : filter.value === "incomplete"
-        ? list.filter((item) => !item.isCompleted)
-        : list,
+        ? list.value.filter((item) => !item.completed)
+        : list.value,
     );
 
     return { filter, listFiltered, title, resetValue, addItem, removeItem };

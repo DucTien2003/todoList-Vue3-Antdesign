@@ -2,14 +2,14 @@
   <div class="item d-flex align-items-center justify-content-between">
     <div
       class="title"
-      :class="{ completed: item.isCompleted }"
+      :class="{ completed: item.completed }"
     >
       {{ item.title }}
     </div>
     <div class="action d-flex">
       <div
         class="action-item action__check d-flex align-items-center justify-content-center"
-        @click="changeComplete(item)"
+        @click="changeComplete"
       >
         <check-circle-filled />
       </div>
@@ -25,23 +25,18 @@
 
 <script>
 import { CheckCircleFilled, DeleteFilled } from "@ant-design/icons-vue";
+import { toRefs } from "vue";
 
 export default {
-  props: {
-    item: {
-      type: Object,
-      required: true,
-    },
-    index: {},
-    removeItem: {},
-  },
+  props: ["item", "index", "removeItem"],
   components: {
     CheckCircleFilled,
     DeleteFilled,
   },
-  setup() {
-    function changeComplete(item) {
-      item.isCompleted = true;
+  setup(props) {
+    const { item } = toRefs(props);
+    function changeComplete() {
+      item.value.completed = true;
     }
 
     return {
