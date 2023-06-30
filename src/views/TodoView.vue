@@ -66,7 +66,7 @@ export default {
     const axios = require("axios").default;
     const getList = () => {
       axios
-        .get("https://ezo13.free.beeceptor.com/todos")
+        .get("https://649958fb79fbe9bcf83f0f2f.mockapi.io/test/api/todos")
         .then(function (response) {
           list.value = response.data;
           console.log(response);
